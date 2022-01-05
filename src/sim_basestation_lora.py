@@ -1,5 +1,6 @@
 import itertools
 import time
+import pickle
 
 import zmq
 import numpy as np
@@ -28,5 +29,22 @@ with socket.connect(socket_name):
         data[1:] = np.random.standard_normal(7)
         sender = next(sender_iter)
         message = TimeOrientPosMessage(data, sender, topic=Topic.ATTITUDE)
-        socket.send_multipart(["LORA".encode("utf-8"), message.serialize()])  # topic
+        data_dict = {
+            "time": str(message.timestamp),
+            "msb_serial_number": message.sender,
+            "topic": "att",
+            "quat1": message.orientation[0],
+            "quat2": message.orientation[1],
+            "quat3": message.orientation[2],
+            "quat4": message.orientation[3],
+            "posx": message.position[0],
+            "posy": message.position[1],
+            "posz": message.position[2],
+        }
+        socket.send_multipart(
+            [
+                "lor".encode("utf-8"),
+                pickle.dumps(data_dict),
+            ]
+        )
         time.sleep(0.3)
