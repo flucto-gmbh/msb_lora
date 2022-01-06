@@ -8,10 +8,18 @@ import zmq
 import logging.config
 
 from driver import LoRaHatDriver
-from loraconfig import lora_hat_config, logging_config_dict
+from config_lora import lora_hat_config, logging_config_dict
 from message import TimeOrientPosMessage, DeserializeError
 
 logging.config.dictConfig(logging_config_dict)
+
+# overwrite basestation specifics in lora hat config
+try:
+    import config_basestation
+
+    lora_hat_config.update(config_basestation.lora_hat_config)
+except ImportError:
+    pass
 
 
 socket_name = "tcp://127.0.0.1:5555"

@@ -5,8 +5,8 @@ import queue
 import threading
 import sys
 
-from loraconfig import lora_hat_config
-from loraconfig import logging_config_dict
+from config_lora import lora_hat_config
+from config_lora import logging_config_dict
 from driver import LoRaHatDriver
 from message import TextMessage
 

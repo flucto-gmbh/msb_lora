@@ -13,10 +13,19 @@ import numpy as np
 import logging.config
 
 from driver import LoRaHatDriver
-from loraconfig import lora_hat_config, logging_config_dict
+from config_lora import lora_hat_config, logging_config_dict
 from message import Topic, TimeOrientPosMessage
 
 logging.config.dictConfig(logging_config_dict)
+
+# overwrite msb specifics in lora hat config
+try:
+    import config_msb
+
+    lora_hat_config.update(config_msb.lora_hat_config)
+except ImportError:
+    pass
+
 
 socket_name = "tcp://127.0.0.1:5556"
 seconds_between_messages = 1

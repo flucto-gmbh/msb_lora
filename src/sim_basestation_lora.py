@@ -9,7 +9,7 @@ from datetime import datetime
 
 import logging.config
 
-from loraconfig import logging_config_dict
+from config_lora import logging_config_dict
 from message import TimeOrientPosMessage, Topic
 
 logging.config.dictConfig(logging_config_dict)
