@@ -93,7 +93,7 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
 
         data = {
             "timestamp": np.array(
-                attitude_data[0], dtype=TimeAttGPSMessage.timestamp_dtype
+                [attitude_data[0]], dtype=TimeAttGPSMessage.timestamp_dtype
             ),
             "attitude": np.array(
                 attitude_data[1:5], dtype=TimeAttGPSMessage.attitude_dtype
