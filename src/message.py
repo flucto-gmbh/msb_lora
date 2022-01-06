@@ -152,12 +152,20 @@ class TimeAttGPSMessage(Message):
                 f"{cls.__name__} expects content with keys: 'timestamp', 'attitude', 'gps' but got  {content.keys()}."
             )
         timestamp = content["timestamp"]
-        if len(timestamp) != 1 or type(timestamp) != np.ndarray or timestamp.dtype != cls.timestamp_dtype:
+        if (
+            len(timestamp) != 1
+            or type(timestamp) != np.ndarray
+            or timestamp.dtype != cls.timestamp_dtype
+        ):
             raise ValueError(
                 f"timestamp has to be a numpy array of length 1 and with dtype {cls.timestamp_dtype}, but was: {timestamp}"
             )
         attitude = content["attitude"]
-        if len(attitude) != 4 or type(attitude) != np.ndarray or attitude.dtype != cls.attitude_dtype:
+        if (
+            len(attitude) != 4
+            or type(attitude) != np.ndarray
+            or attitude.dtype != cls.attitude_dtype
+        ):
             raise ValueError(
                 f"attitude has to be a numpy array of length 4 and with dtype {cls.attitude_dtype}, but was: {attitude}"
             )

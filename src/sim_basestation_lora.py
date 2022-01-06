@@ -25,9 +25,15 @@ with socket.connect(socket_name):
     sender_iter = itertools.cycle([150, 151, 153])
     while True:
         data = {
-            "timestamp": np.array(datetime.utcnow().timestamp(), dtype=TimeAttGPSMessage.timestamp_dtype),
-            "attitude": np.random.standard_normal(4).astype(TimeAttGPSMessage.attitude_dtype),
-            "gps": np.random.standard_normal(3).astype(TimeAttGPSMessage.attitude_dtype),
+            "timestamp": np.array(
+                [datetime.utcnow().timestamp()], dtype=TimeAttGPSMessage.timestamp_dtype
+            ),
+            "attitude": np.random.standard_normal(4).astype(
+                TimeAttGPSMessage.attitude_dtype
+            ),
+            "gps": np.random.standard_normal(3).astype(
+                TimeAttGPSMessage.attitude_dtype
+            ),
         }
         sender = next(sender_iter)
         message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)

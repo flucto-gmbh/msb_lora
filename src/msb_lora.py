@@ -82,9 +82,16 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
             assert len(orient_data) == 5
 
             data = {
-                "timestamp": np.array(orient_data[0], dtype=TimeAttGPSMessage.timestamp_dtype),
-                "attitude": np.array(orient_data[1:5], dtype=TimeAttGPSMessage.attitude_dtype),
-                "gps": np.array([pos_data["lat"], pos_data["lon"], pos_data["alt"]], dtype=TimeAttGPSMessage.gps_dtype)
+                "timestamp": np.array(
+                    orient_data[0], dtype=TimeAttGPSMessage.timestamp_dtype
+                ),
+                "attitude": np.array(
+                    orient_data[1:5], dtype=TimeAttGPSMessage.attitude_dtype
+                ),
+                "gps": np.array(
+                    [pos_data["lat"], pos_data["lon"], pos_data["alt"]],
+                    dtype=TimeAttGPSMessage.gps_dtype,
+                ),
             }
 
             # for debugging: create my own data for now
