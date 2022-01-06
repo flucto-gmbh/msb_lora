@@ -10,7 +10,7 @@ from datetime import datetime
 import logging.config
 
 from config_lora import logging_config_dict
-from message import TimeOrientPosMessage, Topic
+from message import TimeAttGPSMessage, Topic
 
 logging.config.dictConfig(logging_config_dict)
 
@@ -24,22 +24,24 @@ with socket.connect(socket_name):
     logging.info("connected to zeroMQ IPC socket")
     sender_iter = itertools.cycle([150, 151, 153])
     while True:
-        data = np.empty(8, dtype=TimeOrientPosMessage.array_dtype)
-        data[0] = datetime.utcnow().timestamp()
-        data[1:] = np.random.standard_normal(7)
+        data = {
+            "timestamp": np.array(datetime.utcnow().timestamp(), dtype=TimeAttGPSMessage.timestamp_dtype),
+            "attitude": np.random.standard_normal(4).astype(TimeAttGPSMessage.attitude_dtype),
+            "gps": np.random.standard_normal(3).astype(TimeAttGPSMessage.attitude_dtype),
+        }
         sender = next(sender_iter)
-        message = TimeOrientPosMessage(data, sender, topic=Topic.ATTITUDE)
+        message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
         data_dict = {
             "time": str(message.timestamp),
             "msb_serial_number": message.sender,
-            "topic": "att",
-            "quat1": message.orientation[0],
-            "quat2": message.orientation[1],
-            "quat3": message.orientation[2],
-            "quat4": message.orientation[3],
-            "posx": message.position[0],
-            "posy": message.position[1],
-            "posz": message.position[2],
+            "topic": "att_gps",
+            "quat1": message.attitude[0],
+            "quat2": message.attitude[1],
+            "quat3": message.attitude[2],
+            "quat4": message.attitude[3],
+            "lat": message.gps[0],
+            "lon": message.gps[1],
+            "alt": message.gps[2],
         }
         socket.send_multipart(
             [

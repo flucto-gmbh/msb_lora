@@ -9,7 +9,7 @@ import logging.config
 
 from driver import LoRaHatDriver
 from config_lora import lora_hat_config, logging_config_dict
-from message import TimeOrientPosMessage, DeserializeError
+from message import TimeAttGPSMessage, DeserializeError
 
 logging.config.dictConfig(logging_config_dict)
 
@@ -37,7 +37,7 @@ def write_to_zeromq(socket_name):
         while True:
             message = q.get()
             try:
-                print(TimeOrientPosMessage.from_bytes(message))
+                print(TimeAttGPSMessage.from_bytes(message))
             except DeserializeError as e:
                 logging.error(e)
 
