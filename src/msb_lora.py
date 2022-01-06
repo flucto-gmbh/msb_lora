@@ -32,16 +32,16 @@ seconds_between_messages = 1
 
 # thread safe, according to:
 # https://docs.python.org/3/library/collections.html#collections.deque
-orient_buffer = deque(maxlen=1)
-pos_buffer = deque(maxlen=1)
+attitude_buffer = deque(maxlen=1)
+gps_buffer = deque(maxlen=1)
 
 ATTITUDE_TOPIC = "att".encode("utf-8")
 GPS_TOPIC = "gps".encode("utf-8")
 
 
 def read_from_zeromq(socket_name):
-    global orient_buffer
-    global pos_buffer
+    global attitude_buffer
+    global gps_buffer
     logging.debug(f"trying to bind zmq to {socket_name}")
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
@@ -55,9 +55,9 @@ def read_from_zeromq(socket_name):
             while True:
                 topic_bin, data_bin = socket.recv_multipart()
                 if topic_bin == ATTITUDE_TOPIC:
-                    orient_buffer.append(data_bin)
+                    attitude_buffer.append(data_bin)
                 elif topic_bin == GPS_TOPIC:
-                    pos_buffer.append(data_bin)
+                    gps_buffer.append(data_bin)
                 else:
                     assert False
 
@@ -72,36 +72,36 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
     logging.debug(f"LoRa hat config: {pprint.pformat(lora_hat.config)}")
     sender = int(gethostname()[4:8])
     while True:
-        try:
-            orient_data_bin = orient_buffer.pop()
-            pos_data_bin = orient_buffer.pop()
-
-            orient_data = pickle.loads(orient_data_bin)
-            pos_data = pickle.loads(pos_data_bin)
-
-            assert len(orient_data) == 5
-
-            data = {
-                "timestamp": np.array(
-                    orient_data[0], dtype=TimeAttGPSMessage.timestamp_dtype
-                ),
-                "attitude": np.array(
-                    orient_data[1:5], dtype=TimeAttGPSMessage.attitude_dtype
-                ),
-                "gps": np.array(
-                    [pos_data["lat"], pos_data["lon"], pos_data["alt"]],
-                    dtype=TimeAttGPSMessage.gps_dtype,
-                ),
-            }
-
-            # for debugging: create my own data for now
-            # data = np.empty(8, dtype=TimeOrientPosMessage.array_dtype)
-            # data[0] = datetime.utcnow().timestamp()
-            # data[1:] = np.random.standard_normal(7)
-
-            message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
-
-            lora_hat.send(message.serialize())
-        except IndexError:
-            logging.debug("No new data to send")
         time.sleep(seconds_between_messages)
+        try:
+            gps_data_bin = gps_buffer.pop()
+        except IndexError:
+            logging.debug("No new gps data to send")
+            continue
+        try:
+            attitude_data_bin = attitude_buffer.pop()
+        except IndexError:
+            logging.debug("No new attitude data to send")
+            continue
+
+        attitude_data = pickle.loads(attitude_data_bin)
+        gps_data = pickle.loads(gps_data_bin)
+
+        assert len(attitude_data) == 5
+
+        data = {
+            "timestamp": np.array(
+                attitude_data[0], dtype=TimeAttGPSMessage.timestamp_dtype
+            ),
+            "attitude": np.array(
+                attitude_data[1:5], dtype=TimeAttGPSMessage.attitude_dtype
+            ),
+            "gps": np.array(
+                [gps_data["lat"], gps_data["lon"], gps_data["alt"]],
+                dtype=TimeAttGPSMessage.gps_dtype,
+            ),
+        }
+
+        message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
+
+        lora_hat.send(message.serialize())
