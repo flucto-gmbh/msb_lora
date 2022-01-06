@@ -86,6 +86,8 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
 
         attitude_data = pickle.loads(attitude_data_bin)
         gps_data = pickle.loads(gps_data_bin)
+        # we only care about the dict (3rd entry) in gps_data
+        gps_data = gps_data[2]
 
         assert len(attitude_data) == 5
 
