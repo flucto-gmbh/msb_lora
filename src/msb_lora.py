@@ -126,3 +126,4 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
 
         lora_hat.send(message.serialize())
+        time.sleep(0.2)
