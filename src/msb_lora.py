@@ -71,11 +71,11 @@ threading.Thread(target=read_from_zeromq, daemon=True, args=[socket_name]).start
 GO_INTERVALS = [(0.00, 0.2), (0.35, 0.5), (0.65, 0.85)]
 
 #TODO make more general:
-if lora_hat_config["module_id"] == 150:
+if lora_hat_config["module_address"] == 150:
     go, no_go = GO_INTERVALS[0]
-elif lora_hat_config["module_id"] == 151:
+elif lora_hat_config["module_address"] == 151:
     go, no_go = GO_INTERVALS[1]
-elif lora_hat_config["module_id"] == 153:
+elif lora_hat_config["module_address"] == 153:
     go, no_go = GO_INTERVALS[2]
 else:
     assert False
