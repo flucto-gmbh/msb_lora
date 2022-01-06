@@ -38,7 +38,7 @@ with socket.connect(socket_name):
         sender = next(sender_iter)
         message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
         data_dict = {
-            "time": str(message.timestamp),
+            "time": message.timestamp[0],
             "msb_serial_number": message.sender,
             "topic": "att_gps",
             "quat1": message.attitude[0],
