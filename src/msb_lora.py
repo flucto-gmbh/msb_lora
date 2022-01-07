@@ -14,6 +14,7 @@ import logging.config
 
 from driver import LoRaHatDriver
 from config_lora import lora_hat_config, logging_config_dict
+from config_msb import msb_config
 from message import Topic, TimeAttGPSMessage
 
 logging.config.dictConfig(logging_config_dict)
@@ -70,16 +71,7 @@ threading.Thread(target=read_from_zeromq, daemon=True, args=[socket_name]).start
 
 GO_INTERVALS = [(0.00, 0.2), (0.35, 0.5), (0.65, 0.85)]
 
-# TODO make more general: (module_address % 3) ? if the 3 boxes have subsequent module adresses
-if lora_hat_config["module_address"] == 150:
-    go, no_go = GO_INTERVALS[0]
-elif lora_hat_config["module_address"] == 151:
-    go, no_go = GO_INTERVALS[1]
-elif lora_hat_config["module_address"] == 153:
-    go, no_go = GO_INTERVALS[2]
-else:
-    assert False
-
+go, no_go = GO_INTERVALS[msb_config["sender_time_slot"]]
 
 with LoRaHatDriver(lora_hat_config) as lora_hat:
     logging.debug(f"LoRa hat config: {pprint.pformat(lora_hat.config)}")
