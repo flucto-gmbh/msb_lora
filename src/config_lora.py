@@ -80,7 +80,7 @@ lora_hat_default = {
 
 lora_hat_config = lora_hat_default.copy()
 lora_hat_config["enable_point_to_point_mode"] = True
-#lora_hat_config["air_speed"] = AirSpeed.AS_62_5K
+lora_hat_config["channel"] = 73  # ^= 923.125MHz
 
 
 try:
