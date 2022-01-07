@@ -72,6 +72,7 @@ threading.Thread(target=read_from_zeromq, daemon=True, args=[socket_name]).start
 GO_INTERVALS = [(0.00, 0.2), (0.35, 0.5), (0.65, 0.85)]
 
 go, no_go = GO_INTERVALS[msb_config["sender_time_slot"]]
+logging.debug(f"Sending on time slot: {go} - {no_go} s")
 
 with LoRaHatDriver(lora_hat_config) as lora_hat:
     logging.debug(f"LoRa hat config: {pprint.pformat(lora_hat.config)}")
