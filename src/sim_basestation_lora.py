@@ -5,8 +5,6 @@ import pickle
 import zmq
 import numpy as np
 
-from datetime import datetime
-
 import logging.config
 
 from config_lora import logging_config_dict
@@ -26,7 +24,7 @@ with socket.connect(socket_name):
     while True:
         data = {
             "timestamp": np.array(
-                [datetime.utcnow().timestamp()], dtype=TimeAttGPSMessage.timestamp_dtype
+                [time.time()], dtype=TimeAttGPSMessage.timestamp_dtype
             ),
             "attitude": np.random.standard_normal(4).astype(
                 TimeAttGPSMessage.attitude_dtype
