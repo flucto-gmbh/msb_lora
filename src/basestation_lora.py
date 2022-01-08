@@ -41,7 +41,7 @@ def write_to_zeromq(socket_name):
             except DeserializeError as e:
                 logging.error(e)
                 continue
-            logging.debug(str(TimeAttGPSMessage))
+            logging.debug(str(message))
             data_dict = {
                 "time": message.timestamp[0],
                 "msb_serial_number": message.sender,
