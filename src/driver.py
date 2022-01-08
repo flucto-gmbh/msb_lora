@@ -437,6 +437,10 @@ class LoRaHatDriver:
 
         self.ser.open()
         self.ser.reset_input_buffer()
+        self.ser.reset_output_buffer()
+        logging.debug(f"serial settings: {self.ser.get_settings()}")
+        logging.debug(f"serial rts: {self.ser.rts}")
+        logging.debug(f"serial dtr: {self.ser.dtr}")
 
         if self.ser.is_open:
             logging.info("Serial port is open, trying to write configuration.")
