@@ -35,11 +35,28 @@ def write_to_zeromq(socket_name):
         logging.info("connected to zeroMQ IPC socket")
 
         while True:
-            message = q.get()
+            data_bin = q.get()
             try:
-                print(TimeAttGPSMessage.from_bytes(message))
+                message = TimeAttGPSMessage.from_bytes(data_bin)
             except DeserializeError as e:
                 logging.error(e)
+                continue
+            logging.debug(str(TimeAttGPSMessage))
+            data_dict = {
+                "time": message.timestamp[0],
+                "msb_serial_number": message.sender,
+                "topic": "att_gps",
+                "quat1": message.attitude[0],
+                "quat2": message.attitude[1],
+                "quat3": message.attitude[2],
+                "quat4": message.attitude[3],
+                "lat": message.gps[0],
+                "lon": message.gps[1],
+                "alt": message.gps[2],
+            }
+            socket.send_multipart(
+                ["lor".encode("utf-8"), pickle.dumps(data_dict), ]
+            )
 
 
 threading.Thread(target=write_to_zeromq, daemon=True, args=[socket_name]).start()
