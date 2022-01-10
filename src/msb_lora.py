@@ -75,9 +75,6 @@ elif msb_config["n_sender_time_slots"] == 4:
 else:
     raise NotImplementedError("Currently only 3 or 4 sender time slots are supported")
 
-n_sender_time_slots = msb_config.get("n_sender_time_slots", 3)
-sender_time_slot = msb_config.get("sender_time_slot", 3)
-
 go, no_go = GO_INTERVALS[msb_config["sender_time_slot"]]
 logging.debug(f"Sending on time slot: {go} - {no_go} s")
 
@@ -88,23 +85,20 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         # time.sleep(seconds_between_messages)
         now = time.time()
         part = now - int(now)
-        # if not ((go <= part <= no_go) and (int(now) % send_every_n_sec == 0)):
-        #     time.sleep(0.004)
-        #     continue
-        if not (int(now) % n_sender_time_slots == sender_time_slot):
-            time.sleep(0.1)
+        if not go <= part <= no_go:
+            time.sleep(0.004)
             continue
         try:
             gps_data_bin = gps_buffer.pop()
         except IndexError:
             logging.debug("No new gps data to send")
-            time.sleep(1)
+            time.sleep(0.3)
             continue
         try:
             attitude_data_bin = attitude_buffer.pop()
         except IndexError:
             logging.debug("No new attitude data to send")
-            time.sleep(1)
+            time.sleep(0.3)
             continue
 
         attitude_data = pickle.loads(attitude_data_bin)
@@ -130,4 +124,4 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
 
         lora_hat.send(message.serialize())
-        time.sleep(1)
+        time.sleep(0.5)
