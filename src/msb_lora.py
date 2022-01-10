@@ -98,13 +98,13 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
             gps_data_bin = gps_buffer.pop()
         except IndexError:
             logging.debug("No new gps data to send")
-            time.sleep(0.3)
+            time.sleep(1)
             continue
         try:
             attitude_data_bin = attitude_buffer.pop()
         except IndexError:
             logging.debug("No new attitude data to send")
-            time.sleep(0.3)
+            time.sleep(1)
             continue
 
         attitude_data = pickle.loads(attitude_data_bin)
@@ -130,4 +130,4 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
 
         lora_hat.send(message.serialize())
-        time.sleep(0.5)
+        time.sleep(1)
