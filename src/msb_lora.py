@@ -68,8 +68,12 @@ def read_from_zeromq(socket_name):
 
 
 threading.Thread(target=read_from_zeromq, daemon=True, args=[socket_name]).start()
-
-GO_INTERVALS = [(0.00, 0.2), (0.35, 0.5), (0.65, 0.85)]
+if msb_config.get("n_sender_time_slots", None) is None or msb_config["n_sender_time_slots"] == 3:
+    GO_INTERVALS = [(0.00, 0.2), (0.35, 0.5), (0.65, 0.85)]
+elif msb_config["n_sender_time_slots"] == 4:
+    GO_INTERVALS = [(0.00, 0.15), (0.25, 0.40), (0.5, 0.65), (0.75, 0.90)]
+else:
+    raise NotImplementedError("Currently only 3 or 4 sender time slots are supported")
 
 go, no_go = GO_INTERVALS[msb_config["sender_time_slot"]]
 logging.debug(f"Sending on time slot: {go} - {no_go} s")
@@ -82,7 +86,7 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         now = time.time()
         part = now - int(now)
         if not go <= part <= no_go:
-            time.sleep(0.005)
+            time.sleep(0.004)
             continue
         try:
             gps_data_bin = gps_buffer.pop()

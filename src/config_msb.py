@@ -10,4 +10,5 @@ msb_config = {
     # if this is not the case set the sender time slot here manually
     # to one 0, 1 or 2
     "sender_time_slot": lora_hat_config["module_address"] % 3,
+    "n_sender_time_slots": 3,
 }
