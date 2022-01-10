@@ -15,7 +15,7 @@ from driver import (
 # %% logging config
 log_config = {
     "log_level": "DEBUG",
-    "log_file": "mylogfile.log",
+    # "log_file": "mylogfile.log",
     "log_to_console": True,
 }
 
