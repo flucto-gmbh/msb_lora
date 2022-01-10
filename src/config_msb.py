@@ -10,6 +10,6 @@ msb_config = {
     # if this is not the case set the sender time slot here manually
     # to one 0, 1 or 2
     "sender_time_slot": lora_hat_config["module_address"] % 4,
-    "n_sender_time_slots": 4,
+    #"n_slots_per_second": 4,
     #"send_every_n_sec": 2,
 }
