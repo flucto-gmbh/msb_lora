@@ -75,6 +75,8 @@ elif msb_config["n_sender_time_slots"] == 4:
 else:
     raise NotImplementedError("Currently only 3 or 4 sender time slots are supported")
 
+send_every_n_sec = msb_config.get("send_every_n_sec", 1)
+
 go, no_go = GO_INTERVALS[msb_config["sender_time_slot"]]
 logging.debug(f"Sending on time slot: {go} - {no_go} s")
 
@@ -85,7 +87,7 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         # time.sleep(seconds_between_messages)
         now = time.time()
         part = now - int(now)
-        if not go <= part <= no_go:
+        if not go <= part <= no_go and int(time.time()) % send_every_n_sec == 0:
             time.sleep(0.004)
             continue
         try:
