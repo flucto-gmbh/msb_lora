@@ -11,5 +11,5 @@ msb_config = {
     # to one 0, 1 or 2
     "sender_time_slot": lora_hat_config["module_address"] % 3,
     "n_sender_time_slots": 3,
-    "send_every_n_sec": 2,
+    #"send_every_n_sec": 2,
 }
