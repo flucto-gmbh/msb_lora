@@ -16,5 +16,5 @@ python src/msb_lora.py
 
 in basestation/lora
 ```
-python basestation_lora.py
+python src/basestation_lora.py
 ```
