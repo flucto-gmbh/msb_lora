@@ -87,7 +87,7 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         # time.sleep(seconds_between_messages)
         now = time.time()
         part = now - int(now)
-        if not go <= part <= no_go and int(time.time()) % send_every_n_sec == 0:
+        if not ((go <= part <= no_go) and (int(now) % send_every_n_sec == 0)):
             time.sleep(0.004)
             continue
         try:
