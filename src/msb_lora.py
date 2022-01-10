@@ -69,29 +69,9 @@ def read_from_zeromq(socket_name):
 
 threading.Thread(target=read_from_zeromq, daemon=True, args=[socket_name]).start()
 
-# define 4 sender slots:
-# first, even, first part of second
-# second, uneven, first part of second
-# third, even, second part of second
-# fourth, uneven, second part of second
-GO_INTERVALS = [(0.00, 0.2), (0.5, 0.7)]
-sender_time_slot = msb_config["sender_time_slot"]
-if sender_time_slot == 0:
-    go, no_go = GO_INTERVALS[0] # first part
-    mod_2_value = 0  # even
-elif sender_time_slot == 1:
-    go, no_go = GO_INTERVALS[0] # first part
-    mod_2_value = 1  # uneven
-elif sender_time_slot == 2:
-    go, no_go = GO_INTERVALS[1] # second part
-    mod_2_value = 0  # even
-elif sender_time_slot == 3:
-    go, no_go = GO_INTERVALS[1] # second part
-    mod_2_value = 1  # uneven
-else:
-    raise NotImplementedError("Currently max 4 sender time slots are supported.")
 
-logging.debug(f"Sending on time slot: {go} - {no_go} s")
+sender_time_slot = msb_config["sender_time_slot"]
+
 
 with LoRaHatDriver(lora_hat_config) as lora_hat:
     logging.debug(f"LoRa hat config: {pprint.pformat(lora_hat.config)}")
@@ -100,20 +80,20 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         # time.sleep(seconds_between_messages)
         now = time.time()
         part = now - int(now)
-        if not ((go <= part <= no_go) and (int(now) % 2 == mod_2_value)):
-            time.sleep(0.005)
+        if not (int(now) % 4 == sender_time_slot):
+            time.sleep(0.1)
             continue
         try:
             gps_data_bin = gps_buffer.pop()
         except IndexError:
             logging.debug("No new gps data to send")
-            time.sleep(0.5)
+            time.sleep(1)
             continue
         try:
             attitude_data_bin = attitude_buffer.pop()
         except IndexError:
             logging.debug("No new attitude data to send")
-            time.sleep(0.5)
+            time.sleep(1)
             continue
 
         attitude_data = pickle.loads(attitude_data_bin)
@@ -139,4 +119,4 @@ with LoRaHatDriver(lora_hat_config) as lora_hat:
         message = TimeAttGPSMessage(data, sender, topic=Topic.ATTITUDE_AND_GPS)
 
         lora_hat.send(message.serialize())
-        time.sleep(0.5)
+        time.sleep(1)
