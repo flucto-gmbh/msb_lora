@@ -15,7 +15,7 @@ from driver import (
 # %% logging config
 log_config = {
     "log_level": "DEBUG",
-    "log_file": "/tmp/msb_lora_{datetime.now().astimezone().strftime("%Y-%m-%dT%H-%M-%S%z")}.log",
+    "log_file": "/tmp/msb_lora}.log",
     "log_to_console": True,
 }
 
